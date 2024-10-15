@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.groomiz.billage.member.dto.response.AdminListResponse;
 import com.groomiz.billage.member.dto.response.CollegeListResponse;
+import com.groomiz.billage.member.service.AdminService;
 import com.groomiz.billage.member.service.CollegeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class UnivController {
 
 	private final CollegeService collegeService;
+	private final AdminService adminService;
 
 	@GetMapping("/college")
 	@Operation(summary = "단과대/학과 목록 조회")
@@ -33,7 +35,7 @@ public class UnivController {
 	@GetMapping("/admin")
 	@Operation(summary = "담당자 목록 조회")
 	public ResponseEntity<List<AdminListResponse>> findAllAdmin() {
-		List<AdminListResponse> response = null;
+		List<AdminListResponse> response = adminService.findAllAdminInfo();
 		return ResponseEntity.ok(response);
 	}
 }
