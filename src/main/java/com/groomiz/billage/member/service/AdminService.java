@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.groomiz.billage.member.dto.response.AdminListResponse;
 import com.groomiz.billage.member.entity.Member;
+import com.groomiz.billage.member.exception.MemberErrorCode;
+import com.groomiz.billage.member.exception.MemberException;
 import com.groomiz.billage.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,10 @@ public class AdminService {
 
 		// Get all members with admin privileges
 		List<Member> admins = memberRepository.findAllByIsAdminTrue();
+
+		if (admins.isEmpty()) {
+			throw new MemberException(MemberErrorCode.MEMBER_NOT_FOUND);
+		}
 
 		return admins.stream()
 			.collect(Collectors.groupingBy(Member::getCollege))  // Group by College entity

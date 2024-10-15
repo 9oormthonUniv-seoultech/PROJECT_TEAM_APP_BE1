@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.groomiz.billage.member.exception.MemberErrorCode;
+import com.groomiz.billage.member.exception.MemberException;
 
 import jakarta.persistence.Entity;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +44,7 @@ public enum College {
 		College college = NAME_TO_ENUM_MAP.get(name);
 
 		if (college == null) {
-			// TODO: 예외 처리
+			throw new MemberException(MemberErrorCode.INVALID_COLLEGE_ENUM);
 		}
 
 		return college;
