@@ -10,5 +10,6 @@ import org.springframework.data.repository.query.Param;
 import com.groomiz.billage.reservation.entity.Reservation;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+
 	List<Reservation> findByClassroomIdAndApplyDate(Long classroomId, LocalDate applyDate);
 }
