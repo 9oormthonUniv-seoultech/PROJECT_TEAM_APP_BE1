@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.groomiz.billage.classroom.dto.request.ClassroomListRequest;
 import com.groomiz.billage.classroom.dto.response.ClassroomDetailResponse;
 import com.groomiz.billage.classroom.dto.response.ClassroomListResponse;
+import com.groomiz.billage.classroom.service.ClassroomSearchService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,11 +26,13 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Classroom Controller", description = "[학생] 강의실 관련 API")
 public class ClassroomController {
 
+	private final ClassroomSearchService classroomSearchService;
+
 	@PostMapping
 	@Operation(summary = "강의실 목록 조회")
 	public ResponseEntity<List<ClassroomListResponse>> findAll(@RequestBody ClassroomListRequest request) {
 
-		List<ClassroomListResponse> response = null;
+		List<ClassroomListResponse> response = classroomSearchService.findClassrooms(request);
 		return ResponseEntity.ok(response);
 	}
 
