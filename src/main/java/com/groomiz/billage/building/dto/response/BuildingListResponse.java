@@ -5,8 +5,10 @@ import java.util.List;
 import com.groomiz.billage.building.service.Congestion;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 @Schema(description = "건물 목록 조회 응답 DTO")
 public class BuildingListResponse {
