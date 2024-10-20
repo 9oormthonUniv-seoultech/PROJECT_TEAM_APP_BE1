@@ -94,4 +94,12 @@ public class MemberService {
 	public boolean isExists(String studentNumber) {
 		return memberRepository.existsByStudentNumber(studentNumber);
 	}
+
+	public void delete(String currentUsername) {
+
+		Member member = memberRepository.findByUsername(currentUsername)
+			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+		memberRepository.delete(member);
+	}
 }

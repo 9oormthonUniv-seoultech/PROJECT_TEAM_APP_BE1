@@ -73,8 +73,18 @@ public class MemberController {
 	@DeleteMapping
 	@Operation(summary = "회원 탈퇴")
 	@ApiErrorExceptionsExample(UserInfoExceptionDocs.class)
-	public ResponseEntity<String> delete() {
-		return ResponseEntity.ok("success");
+	public ResponseEntity<?> delete() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUsername = authentication.getName();
+
+		try {
+			memberService.delete(currentUsername);
+		} catch (MemberException e) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+				.body(new SuccessResponse(HttpStatus.FORBIDDEN.value(), e.getMessage()));
+		}
+
+		return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK.value(), "회원 탈퇴가 성공적으로 완료되었습니다."));
 	}
 
 	@PutMapping("/password")
