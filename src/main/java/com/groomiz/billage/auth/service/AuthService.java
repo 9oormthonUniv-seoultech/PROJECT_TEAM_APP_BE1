@@ -1,18 +1,33 @@
 package com.groomiz.billage.auth.service;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.groomiz.billage.auth.dto.LoginRequest;
 import com.groomiz.billage.auth.exception.AuthErrorCode;
 import com.groomiz.billage.auth.exception.AuthException;
 import com.groomiz.billage.auth.jwt.JwtTokenProvider;
 import com.groomiz.billage.auth.jwt.JwtUtil;
+import com.groomiz.billage.member.exception.MemberErrorCode;
+import com.groomiz.billage.member.exception.MemberException;
+import com.groomiz.billage.member.repository.MemberRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +41,8 @@ public class AuthService {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisService redisService;
 	private final JwtUtil jwtUtil;
+
+	private final MemberRepository memberRepository;
 
 	public void login(LoginRequest loginRequest, HttpServletResponse response) throws AuthenticationException {
 		// 로그인 인증 처리
@@ -80,4 +97,17 @@ public class AuthService {
 			new UsernamePasswordAuthenticationToken(loginRequest.getStudentNumber(), loginRequest.getPassword());
 		return authenticationManager.authenticate(authToken);
 	}
+
+	public void checkStudentNumber(String studentNumber) {
+		if (String.valueOf(studentNumber).length() != 8) {
+			throw new MemberException(MemberErrorCode.INVALID_STUDENT_ID);
+		}
+
+		boolean exists = memberRepository.existsByStudentNumber(studentNumber);
+		if (exists) {
+			throw new MemberException(MemberErrorCode.STUDENT_ID_ALREADY_REGISTERED);
+		}
+
+	}
+
 }

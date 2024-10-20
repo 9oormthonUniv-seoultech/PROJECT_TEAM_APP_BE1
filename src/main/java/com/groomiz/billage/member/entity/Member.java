@@ -76,4 +76,22 @@ public class Member extends BaseEntity {
 		this.phoneNumber = phoneNumber;
 		this.agreedToTerms = agreedToTerms;
 	}
+
+	public void updatePhoneNumber(String newPhoneNumber) {
+		if (!this.phoneNumber.equals(newPhoneNumber)) {
+			this.phoneNumber = newPhoneNumber;
+		}
+	}
+
+	public void updateEmail(String newEmail) {
+		if (!this.studentEmail.equals(newEmail)) {
+			this.studentEmail = newEmail;
+		}
+	}
+
+	public void updatePassword(String newPassword) {
+		if (!this.password.equals(newPassword)) {
+			this.password = newPassword;
+		}
+	}
 }
