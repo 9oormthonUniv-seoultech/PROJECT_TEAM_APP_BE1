@@ -42,6 +42,8 @@ public class ClassroomDetailSearchService {
 			.collect(Collectors.toList());
 
 		return ClassroomDetailResponse.builder()
+			.buildingId(classroom.getBuilding().getId())
+			.buildingName(classroom.getBuilding().getName())
 			.classroomId(classroom.getId())
 			.classroomName(classroom.getName())
 			.classroomNumber(classroom.getNumber())

@@ -13,6 +13,10 @@ import lombok.Data;
 @Schema(description = "강의실 상세 조회 응답 DTO")
 public class ClassroomDetailResponse {
 
+	@Schema(description = "건물 ID", example = "40")
+	private Long buildingId;
+	@Schema(description = "건물 이름", example = "어의관")
+	private String buildingName;
 	@Schema(description = "강의실 ID", example = "1")
 	private Long classroomId;
 	@Schema(description = "강의실 이름", example = "실험실")
