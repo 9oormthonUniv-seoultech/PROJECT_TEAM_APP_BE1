@@ -1,13 +1,25 @@
 package com.groomiz.billage.auth.service;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.groomiz.billage.auth.dto.LoginRequest;
 import com.groomiz.billage.auth.exception.AuthErrorCode;
 import com.groomiz.billage.auth.exception.AuthException;
@@ -26,6 +38,7 @@ public class AuthService {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisService redisService;
 	private final JwtUtil jwtUtil;
+
 
 	public void login(LoginRequest loginRequest, HttpServletResponse response) throws AuthenticationException {
 		// 로그인 인증 처리

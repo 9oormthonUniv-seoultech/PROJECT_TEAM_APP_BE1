@@ -1,5 +1,7 @@
 package com.groomiz.billage.auth.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,8 @@ import com.groomiz.billage.auth.document.VerifyEmailException;
 import com.groomiz.billage.auth.dto.LoginRequest;
 import com.groomiz.billage.auth.dto.RegisterRequest;
 import com.groomiz.billage.auth.service.AuthService;
+import com.groomiz.billage.auth.service.UnivcertService;
+import com.groomiz.billage.common.dto.SuccessResponse;
 import com.groomiz.billage.global.anotation.ApiErrorExceptionsExample;
 import com.groomiz.billage.member.service.MemberService;
 
@@ -34,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final AuthService authService;
+	private final UnivcertService univcertService;
 	private final MemberService memberService;
 
 	@PostMapping("/login")
@@ -80,19 +85,47 @@ public class UserController {
 
 	@PostMapping("/certificate")
 	@Operation(summary = "이메일 인증 요청")
-	@ApiErrorExceptionsExample(CertificateEmailExceptionDocs.class)
 	public ResponseEntity<?> certificate(
-		@Parameter(description = "이메일", example = "asdf1234@gmail.com") @RequestParam String email) {
-		return ResponseEntity.ok("success");
+		@Parameter(description = "이메일", example = "abc@mail.hongik.ac.kr") @RequestParam String email) {
+
+		try {
+			boolean isSuccess = univcertService.sendEmailCertification(email);
+
+			if (isSuccess) {
+				return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK.value(), "인증 코드 발송 성공"));
+			} else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new SuccessResponse(HttpStatus.BAD_REQUEST.value(), "인증 코드 발송 실패"));
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new SuccessResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류: " + e.getMessage()));
+		}
 	}
+
 
 	@PostMapping("/verify")
 	@Operation(summary = "이메일 인증 코드 검증")
 	@ApiErrorExceptionsExample(VerifyEmailException.class)
 	public ResponseEntity<?> verify(
-		@Parameter(description = "이메일", example = "asdf1234@gmail.com") @RequestParam String email,
-		@Parameter(description = "인증 코드", example = "123456") @RequestParam String code) {
-		return ResponseEntity.ok("success");
+		@Parameter(description = "이메일", example = "abc@mail.hongik.ac.kr") @RequestParam String email,
+		@Parameter(description = "인증 코드", example = "3816") @RequestParam int code) {
+
+
+		try {
+			Map<String, Object> verificationResult = univcertService.verifyEmailCertification(email, code);
+
+			if ((Boolean) verificationResult.get("success")) {
+				return ResponseEntity.ok(verificationResult);
+			} else {
+				String errorMessage = (String) verificationResult.getOrDefault("message", "인증 실패");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new SuccessResponse(HttpStatus.BAD_REQUEST.value(), errorMessage));
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new SuccessResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류: " + e.getMessage()));
+		}
 	}
 
 }

@@ -21,6 +21,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven{url 'https://jitpack.io'}
 }
 
 dependencies {
@@ -48,6 +49,11 @@ dependencies {
     // lombok test
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
+    //univcert
+    implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 }
 
 tasks.named('test') {
