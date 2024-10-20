@@ -34,7 +34,7 @@ public class ReservationStatus extends BaseEntity {
 	private String rejectionReason;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "admin_id", nullable = false)
+	@JoinColumn(name = "admin_id")
 	private Member admin;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.groomiz.billage.auth.dto.CustomUserDetails;
 import com.groomiz.billage.common.dto.SuccessResponse;
+
 import com.groomiz.billage.global.anotation.ApiErrorExceptionsExample;
 import com.groomiz.billage.member.document.UserInfoEditExceptionDocs;
 import com.groomiz.billage.member.document.UserInfoExceptionDocs;
@@ -68,6 +69,7 @@ public class MemberController {
 		}
 
 		return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK.value(), "회원 정보가 성공적으로 수정되었습니다."));
+
 	}
 
 	@DeleteMapping
@@ -90,6 +92,7 @@ public class MemberController {
 	@PutMapping("/password")
 	@Operation(summary = "비밀번호 수정")
 	@ApiErrorExceptionsExample(UserPasswordExceptionDocs.class)
+
 	public ResponseEntity<?> updatePassword(@RequestBody PasswordRequest passwordRequest) {
 		try {
 			memberService.updatePassword(passwordRequest);
@@ -99,6 +102,7 @@ public class MemberController {
 		}
 
 		return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK.value(), "비밀번호가 성공적으로 수정되었습니다."));
+
 	}
 
 }

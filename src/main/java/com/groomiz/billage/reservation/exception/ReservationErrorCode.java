@@ -53,8 +53,13 @@ public enum ReservationErrorCode implements BaseErrorCode {
 	NO_PURPOSE_IN_ETC(BAD_REQUEST, "RESERVATION_400_11", "기타 목적에 목적이 없습니다."),
 
 	@ExplainError("시작 시간이 종료 시간보다 뒤일 경우 발생하는 오류입니다.")
-	START_TIME_AFTER_END_TIME(BAD_REQUEST, "RESERVATION_400_12", "시작 시간이 종료 시간보다 뒤입니다.");
+	START_TIME_AFTER_END_TIME(BAD_REQUEST, "RESERVATION_400_12", "시작 시간이 종료 시간보다 뒤입니다."),
 
+	@ExplainError("예약 날짜가 yyyy-MM-dd 형식이 아닌 경우 발생하는 오류입니다.")
+	INVALID_RESERVATION_DATE(BAD_REQUEST, "RESERVATION_400_13", "예약 날짜는 yyyy-MM-dd 형식이어야 합니다."),
+
+	@ExplainError("이미 예약 대기 상태 혹은 승인된 강의실인 경우 발생하는 오류입니다.")
+	DUPLICATE_RESERVATION(BAD_REQUEST, "RESERVATION_400_14", "이미 예약 대기 상태 혹은 승인된 강의실입니다.");
 
 	private final Integer status;
 	private final String code;

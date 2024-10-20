@@ -18,7 +18,7 @@ public class ClassroomReservationRequest {
 	@NotNull
 	private Long classroomId;
 	@Schema(description = "예약자 추가 전화번호", example = "010-1234-5678")
-	private String phoneNumbers;
+	private String phoneNumber;
 	@Schema(description = "예약 날짜", example = "2024-08-01")
 	@NotNull
 	private LocalDate applyDate;
