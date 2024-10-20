@@ -1,5 +1,6 @@
 package com.groomiz.billage.member.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.groomiz.billage.auth.dto.CustomUserDetails;
+import com.groomiz.billage.common.dto.SuccessResponse;
 import com.groomiz.billage.global.anotation.ApiErrorExceptionsExample;
 import com.groomiz.billage.member.document.UserInfoEditExceptionDocs;
 import com.groomiz.billage.member.document.UserInfoExceptionDocs;
@@ -20,6 +22,7 @@ import com.groomiz.billage.member.document.UserPasswordExceptionDocs;
 import com.groomiz.billage.member.dto.request.MemberInfoRequest;
 import com.groomiz.billage.member.dto.response.MemberInfoResponse;
 import com.groomiz.billage.member.dto.request.PasswordRequest;
+import com.groomiz.billage.member.exception.MemberException;
 import com.groomiz.billage.member.service.MemberService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,14 +54,20 @@ public class MemberController {
 	@PutMapping("/info")
 	@Operation(summary = "회원 정보 수정")
 	@ApiErrorExceptionsExample(UserInfoEditExceptionDocs.class)
-	public ResponseEntity<String> updateUserInfo(@RequestBody MemberInfoRequest memberInfoRequest) {
+	public ResponseEntity<?> updateUserInfo(@RequestBody MemberInfoRequest memberInfoRequest) {
 
 		// 현재 사용자 정보 가져오기
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentUsername = authentication.getName();
 
-		memberService.updateMemberInfo(memberInfoRequest, currentUsername);
-		return ResponseEntity.ok("success");
+		try {
+			memberService.updateMemberInfo(memberInfoRequest, currentUsername);
+		} catch (MemberException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new SuccessResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+		}
+
+		return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK.value(), "회원 정보가 성공적으로 수정되었습니다."));
 	}
 
 	@DeleteMapping
@@ -71,8 +80,15 @@ public class MemberController {
 	@PutMapping("/password")
 	@Operation(summary = "비밀번호 수정")
 	@ApiErrorExceptionsExample(UserPasswordExceptionDocs.class)
-	public ResponseEntity<String> updatePassword(@RequestBody PasswordRequest passwordRequest) {
-		return ResponseEntity.ok("success");
+	public ResponseEntity<?> updatePassword(@RequestBody PasswordRequest passwordRequest) {
+		try {
+			memberService.updatePassword(passwordRequest);
+		}  catch (MemberException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new SuccessResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+		}
+
+		return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK.value(), "비밀번호가 성공적으로 수정되었습니다."));
 	}
 
 }

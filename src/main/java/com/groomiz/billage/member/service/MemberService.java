@@ -8,6 +8,7 @@ import com.groomiz.billage.auth.exception.AuthErrorCode;
 import com.groomiz.billage.auth.exception.AuthException;
 import com.groomiz.billage.auth.jwt.JwtUtil;
 import com.groomiz.billage.member.dto.request.MemberInfoRequest;
+import com.groomiz.billage.member.dto.request.PasswordRequest;
 import com.groomiz.billage.member.dto.response.MemberInfoResponse;
 import com.groomiz.billage.member.entity.College;
 import com.groomiz.billage.member.entity.Major;
@@ -76,6 +77,19 @@ public class MemberService {
 		memberRepository.save(member);
 	}
 
+	public void updatePassword(PasswordRequest passwordRequest) {
+
+		String oldPassword = passwordRequest.getOldPassword();
+		String newPassword = passwordRequest.getNewPassword();
+
+		Member member = memberRepository.findByPassword(oldPassword)
+			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+		String encodedPassword = passwordEncoder.encode(newPassword);
+		member.updatePassword("{bcrypt}" + encodedPassword);
+
+		memberRepository.save(member);
+	}
 
 	public boolean isExists(String studentNumber) {
 		return memberRepository.existsByStudentNumber(studentNumber);

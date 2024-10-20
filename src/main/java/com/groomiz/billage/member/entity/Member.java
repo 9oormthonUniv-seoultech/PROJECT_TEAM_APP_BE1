@@ -88,4 +88,10 @@ public class Member extends BaseEntity {
 			this.studentEmail = newEmail;
 		}
 	}
+
+	public void updatePassword(String newPassword) {
+		if (!this.password.equals(newPassword)) {
+			this.password = newPassword;
+		}
+	}
 }
