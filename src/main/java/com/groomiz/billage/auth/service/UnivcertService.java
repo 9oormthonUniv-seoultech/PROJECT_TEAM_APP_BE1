@@ -1,5 +1,6 @@
 package com.groomiz.billage.auth.service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.univcert.api.UnivCert;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,72 +24,44 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UnivcertService {
 
-	private final RestTemplate restTemplate;
-
 	@Value("${univcert.api-key}")
 	private String apiKey;
 
-	public boolean sendEmailCertification(String email) {
-		String url = "https://univcert.com/api/v1/certify";
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-
-		Map<String, Object> requestBody = new HashMap<>();
-		requestBody.put("key", apiKey);
-		requestBody.put("email", email);
-
-		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-
+	public Map<?, ?> certifyEmail(String email, String univName, boolean univCheck) {
 		try {
-			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+			Map<String, Object> response = UnivCert.certify(apiKey, email, univName, univCheck);
+			boolean success = (Boolean) response.get("success");
 
-			if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-				Map<String, Object> result = new ObjectMapper().readValue(response.getBody(), Map.class);
-				return Boolean.TRUE.equals(result.get("success"));
+			if (success) {
+				response.put("message", "인증번호 발송 성공");
 			} else {
-				System.out.println("예상치 못한 응답: " + response.getBody());
-				return false;
+				response.put("message", response.getOrDefault("message", "인증번호 발송 실패"));
 			}
-		} catch (HttpClientErrorException e) {
-			System.out.println("HTTP 요청 오류: " + e.getMessage());
-			return false;
-		} catch (Exception e) {
-			System.out.println("오류 발생: " + e.getMessage());
-			return false;
+			return response;
+
+		} catch (IOException e) {
+			return Map.of("success", false, "message", "오류가 발생했습니다.");
 		}
 	}
 
-	public Map<String, Object> verifyEmailCertification(String email, int code) {
-		String url = "https://univcert.com/api/v1/certifycode";
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		Map<String, Object> body = new HashMap<>();
-		body.put("key", apiKey);
-		body.put("email", email);
-		body.put("code", code);
-
-		// 요청 보내기
-		HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
+	public Map<?, ?> verifyEmail(String email, String univName,  int code) {
 		try {
-			ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
-			Map<String, Object> responseBody = response.getBody();
+			// UnivCert API 호출
+			Map<String, Object> response = UnivCert.certifyCode(apiKey, email, univName, code);
+			boolean success = (Boolean) response.get("success");
 
-			if (responseBody != null && Boolean.TRUE.equals(responseBody.get("success"))) {
-				return responseBody;  // 인증 성공 시 응답 데이터 반환
+			// 성공 여부에 따라 메시지 설정
+			if (success) {
+				response.put("message", "인증번호가 일치합니다l");
 			} else {
-				Map<String, Object> failureResponse = new HashMap<>();
-				failureResponse.put("success", false);
-				failureResponse.put("message", responseBody != null ? responseBody.get("message") : "인증 실패");
-				return failureResponse;
+				response.put("message", response.getOrDefault("message", "인증번호가 일치하지 않습니다."));
 			}
-		} catch (Exception e) {
-			Map<String, Object> errorResponse = new HashMap<>();
-			errorResponse.put("success", false);
-			errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
-			return errorResponse;
+
+			return response; // 응답을 그대로 반환
+
+		} catch (IOException e) {
+			// IOException 발생 시 응답 설정
+			return Map.of("success", false, "message", "오류가 발생했습니다.");
 		}
 	}
 }
