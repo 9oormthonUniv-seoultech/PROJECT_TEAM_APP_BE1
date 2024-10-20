@@ -1,4 +1,4 @@
-package com.groomiz.billage.member.dto;
+package com.groomiz.billage.member.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

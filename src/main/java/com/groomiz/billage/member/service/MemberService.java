@@ -4,10 +4,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.groomiz.billage.auth.dto.RegisterRequest;
+import com.groomiz.billage.auth.exception.AuthErrorCode;
+import com.groomiz.billage.auth.exception.AuthException;
+import com.groomiz.billage.auth.jwt.JwtUtil;
+import com.groomiz.billage.member.dto.response.MemberInfoResponse;
 import com.groomiz.billage.member.entity.College;
 import com.groomiz.billage.member.entity.Major;
 import com.groomiz.billage.member.entity.Member;
 import com.groomiz.billage.member.entity.Role;
+import com.groomiz.billage.member.exception.MemberErrorCode;
+import com.groomiz.billage.member.exception.MemberException;
 import com.groomiz.billage.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +40,25 @@ public class MemberService {
 			.build();
 		memberRepository.save(member);
 
+	}
+	public MemberInfoResponse getMemberInfo(String username) {
+
+		// 회원 정보 조회
+		Member member = memberRepository.findByUsername(username)
+			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+
+		// 응답 DTO 생성
+		// 예약 횟수 구현 안함
+		return MemberInfoResponse.builder()
+			.studentNumber(member.getStudentNumber())
+			.name(member.getUsername())
+			.phoneNumber(member.getPhoneNumber())
+			.college(member.getCollege())
+			.major(member.getMajor())
+			.email(member.getStudentEmail())
+			.reservationCount(3)
+			.build();
 	}
 
 	public boolean isExists(String studentNumber) {

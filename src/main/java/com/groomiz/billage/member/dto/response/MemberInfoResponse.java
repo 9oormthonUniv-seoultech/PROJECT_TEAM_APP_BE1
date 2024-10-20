@@ -1,19 +1,21 @@
-package com.groomiz.billage.member.dto;
+package com.groomiz.billage.member.dto.response;
 
 import com.groomiz.billage.member.entity.College;
 import com.groomiz.billage.member.entity.Major;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 @Schema(description = "회원 정보 응답 DTO")
 public class MemberInfoResponse {
 
 	@NotNull
 	@Schema(description = "학번", example = "20100000")
-	private Integer studentNumber;
+	private String studentNumber;
 
 	@NotNull
 	@Schema(description = "이름", example = "홍길동")
