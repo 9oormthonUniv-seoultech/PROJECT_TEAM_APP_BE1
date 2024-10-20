@@ -38,3 +38,4 @@ out/
 .DS_Store
 */.DS_Store
 application-dev.yml
+application-local.yml
