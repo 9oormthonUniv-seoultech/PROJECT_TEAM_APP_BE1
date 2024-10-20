@@ -10,6 +10,8 @@ import com.groomiz.billage.classroom.dto.ReservationTime;
 import com.groomiz.billage.classroom.dto.request.ClassroomListRequest;
 import com.groomiz.billage.classroom.dto.response.ClassroomListResponse;
 import com.groomiz.billage.classroom.entity.Classroom;
+import com.groomiz.billage.classroom.exception.ClassroomErrorCode;
+import com.groomiz.billage.classroom.exception.ClassroomException;
 import com.groomiz.billage.classroom.repository.ClassroomRepository;
 import com.groomiz.billage.reservation.entity.Reservation;
 import com.groomiz.billage.reservation.repository.ReservationRepository;
@@ -30,6 +32,11 @@ public class ClassroomSearchService {
 			request.getFloor(),
 			request.getHeadcount()
 		);
+
+		// 강의실이 없는 경우 에러 처리
+		if (classrooms.isEmpty()) {
+			throw new ClassroomException(ClassroomErrorCode.CLASSROOM_NOT_FOUND);
+		}
 
 		return classrooms.stream().map(classroom -> {
 			// 강의실에 해당하는 예약된 시간 정보 조회
