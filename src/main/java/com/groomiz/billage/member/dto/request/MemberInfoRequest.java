@@ -3,7 +3,9 @@ package com.groomiz.billage.member.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
 
+@Getter
 @Data
 @Schema(description = "회원 정보 수정 요청 DTO")
 public class MemberInfoRequest {

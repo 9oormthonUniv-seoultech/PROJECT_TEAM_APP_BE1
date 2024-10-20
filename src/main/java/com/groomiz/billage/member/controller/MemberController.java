@@ -1,5 +1,7 @@
 package com.groomiz.billage.member.controller;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,9 +37,13 @@ public class MemberController {
 	@GetMapping("/info")
 	@Operation(summary = "회원 정보 조회")
 	@ApiErrorExceptionsExample(UserInfoExceptionDocs.class)
-	public ResponseEntity<MemberInfoResponse> info(@AuthenticationPrincipal CustomUserDetails user) {
+	public ResponseEntity<MemberInfoResponse> info() {
 
-		MemberInfoResponse response = memberService.getMemberInfo(user.getUsername());
+		// 현재 사용자 정보 가져오기
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUsername = authentication.getName();
+
+		MemberInfoResponse response = memberService.getMemberInfo(currentUsername);
 
 		return ResponseEntity.ok(response);
 	}
@@ -45,7 +51,13 @@ public class MemberController {
 	@PutMapping("/info")
 	@Operation(summary = "회원 정보 수정")
 	@ApiErrorExceptionsExample(UserInfoEditExceptionDocs.class)
-	public ResponseEntity<String> updatePhoneNumber(@RequestBody MemberInfoRequest memberInfoRequest) {
+	public ResponseEntity<String> updateUserInfo(@RequestBody MemberInfoRequest memberInfoRequest) {
+
+		// 현재 사용자 정보 가져오기
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUsername = authentication.getName();
+
+		memberService.updateMemberInfo(memberInfoRequest, currentUsername);
 		return ResponseEntity.ok("success");
 	}
 

@@ -7,6 +7,7 @@ import com.groomiz.billage.auth.dto.RegisterRequest;
 import com.groomiz.billage.auth.exception.AuthErrorCode;
 import com.groomiz.billage.auth.exception.AuthException;
 import com.groomiz.billage.auth.jwt.JwtUtil;
+import com.groomiz.billage.member.dto.request.MemberInfoRequest;
 import com.groomiz.billage.member.dto.response.MemberInfoResponse;
 import com.groomiz.billage.member.entity.College;
 import com.groomiz.billage.member.entity.Major;
@@ -41,10 +42,10 @@ public class MemberService {
 		memberRepository.save(member);
 
 	}
-	public MemberInfoResponse getMemberInfo(String username) {
+	public MemberInfoResponse getMemberInfo(String currentUsername) {
 
 		// 회원 정보 조회
-		Member member = memberRepository.findByUsername(username)
+		Member member = memberRepository.findByUsername(currentUsername)
 			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
 
@@ -60,6 +61,21 @@ public class MemberService {
 			.reservationCount(3)
 			.build();
 	}
+
+	public void updateMemberInfo(MemberInfoRequest memberInfoRequest, String currentUsername) {
+
+		String email = memberInfoRequest.getEmail();
+		String phoneNumber = memberInfoRequest.getPhoneNumber();
+
+		Member member = memberRepository.findByUsername(currentUsername)
+			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+		member.updatePhoneNumber(phoneNumber);
+		member.updateEmail(email);
+
+		memberRepository.save(member);
+	}
+
 
 	public boolean isExists(String studentNumber) {
 		return memberRepository.existsByStudentNumber(studentNumber);
