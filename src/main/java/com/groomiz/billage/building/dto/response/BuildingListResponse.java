@@ -2,8 +2,6 @@ package com.groomiz.billage.building.dto.response;
 
 import java.util.List;
 
-import com.groomiz.billage.building.service.Congestion;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +17,6 @@ public class BuildingListResponse {
 	private String buildingName;
 	@Schema(description = "건물 번호", example = "39")
 	private String buildingNumber;
-	@Schema(description = "혼잡도", example = "39")
-	private Congestion congestion;
 	@Schema(description = "층 리스트", example = "[1, 2, 3]")
 	private List<Long> floors;
 

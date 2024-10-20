@@ -34,7 +34,6 @@ public class BuildingService {
 				long totalReservations = buildingRepository.countReservationsByBuildingAndDate(building.getId(), date);
 				long totalClassrooms = buildingRepository.countClassroomsByBuilding(building.getId());
 
-				Congestion congestion = CongestionCalculator.calculateCongestion(totalReservations, totalClassrooms);
 
 				List<Long> floors = generateFloors(building.getStartFloor(), building.getEndFloor());
 
@@ -42,10 +41,8 @@ public class BuildingService {
 					.buildingId(building.getId())
 					.buildingName(building.getName())
 					.buildingNumber(building.getNumber())
-					.congestion(congestion)
 					.floors(floors)
 					.build();
-
 
 				return response;
 			})
