@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.groomiz.billage.member.exception.MemberErrorCode;
+import com.groomiz.billage.member.exception.MemberException;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -85,7 +87,7 @@ public enum Major {
 		Major major = NAME_TO_ENUM_MAP.get(name);
 
 		if (major == null) {
-			// TODO: 예외 처리
+			throw new MemberException(MemberErrorCode.INVALID_MAJOR_ENUM);
 		}
 
 		return major;

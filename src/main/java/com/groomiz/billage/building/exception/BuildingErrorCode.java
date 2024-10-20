@@ -23,7 +23,11 @@ public enum BuildingErrorCode implements BaseErrorCode {
 	INVALID_BUILDING(BAD_REQUEST, "BUILDING_400_1", "잘못된 건물 정보입니다."),
 
 	@ExplainError("층과 건물이 맞지 않는 경우 발생하는 오류입니다.")
-	FLOOR_BUILDING_MISMATCH(BAD_REQUEST, "BUILDING_400_2", "층과 건물이 일치하지 않습니다.");
+	FLOOR_BUILDING_MISMATCH(BAD_REQUEST, "BUILDING_400_2", "층과 건물이 일치하지 않습니다."),
+
+	@ExplainError("혼잡도 레벨이 올바르지 않을 때 발생하는 오류입니다.")
+	INVALID_CONGESTION_LEVEL(BAD_REQUEST, "BUILDING_400_3", "혼잡도가 올바르지 않습니다. 허용되는 값은 'LOW', 'AVG', 'HIGH'입니다.");
+
 
 	private final Integer status;
 	private final String code;

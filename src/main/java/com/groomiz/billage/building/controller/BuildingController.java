@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.groomiz.billage.building.dto.response.BuildingListResponse;
+import com.groomiz.billage.building.service.BuildingService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/univ/building")
 @Tag(name = "Building Controller", description = "[학생] 건물 관련 API")
-public class BuildingController {
+public class 	BuildingController {
+
+	private final BuildingService buildingService;
 
 	@GetMapping
 	@Operation(summary = "건물 목록 조회")
@@ -30,7 +33,7 @@ public class BuildingController {
 		@Parameter(description = "예약 인원", example = "30")
 		@RequestParam("headcount") Integer count) {
 
-		List<BuildingListResponse> response = null;
+		List<BuildingListResponse> response = buildingService.findAllBuildings(date, count);
 		return ResponseEntity.ok(response);
 	}
 }
