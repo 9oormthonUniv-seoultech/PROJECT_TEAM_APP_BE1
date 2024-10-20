@@ -3,18 +3,16 @@ package com.groomiz.billage.auth.jwt;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.groomiz.billage.auth.config.SecurityProperties;
 import com.groomiz.billage.auth.dto.CustomUserDetails;
 import com.groomiz.billage.member.entity.Member;
 import com.groomiz.billage.member.entity.Role;
@@ -26,17 +24,22 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
-	private final List<String> whiteList;
 	private final JwtUtil jwtUtil;
+	private final SecurityProperties securityProperties;
+	private List<String> whiteList;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+
+		whiteList = securityProperties.getWhitelist();
 
 		// 헤더에서 Authorization에 담긴 토큰을 꺼냄
 		String authorizationHeader = request.getHeader("Authorization");
@@ -64,17 +67,17 @@ public class JwtFilter extends OncePerRequestFilter {
 				}
 
 				// username, role 값을 획득
-				String username = jwtUtil.getUsername(accessToken);
+				String studentNumber = jwtUtil.getStudentNumber(accessToken);
 				String role = jwtUtil.getRole(accessToken);
 
-				if (username == null || role == null) {
+				if (studentNumber == null || role == null) {
 					sendErrorResponse(response, "Invalid token claims", HttpServletResponse.SC_UNAUTHORIZED);
 					return;
 				}
 
 				// SecurityContext에 인증 정보 설정
 				Member member = Member.builder()
-					.username(username)
+					.studentNumber(studentNumber)
 					.role(Role.valueOf(role))
 					.build();
 
@@ -102,10 +105,19 @@ public class JwtFilter extends OncePerRequestFilter {
 	}
 
 	private boolean checkAuthRequired(HttpServletRequest request) {
-		RequestMatcher rm = new NegatedRequestMatcher(new OrRequestMatcher(
-			whiteList.stream()
-				.map(AntPathRequestMatcher::new)
-				.collect(Collectors.toList())));
-		return rm.matcher(request).isMatch();
+		if (whiteList == null || whiteList.isEmpty()) {
+			return true; // 인증 필요
+		}
+
+		// 요청이 whiteList에 포함된 경우 인증을 요구하지 않음
+		for (String path : whiteList) {
+			RequestMatcher matcher = new AntPathRequestMatcher(path);
+			if (matcher.matches(request)) {
+				return false; // whiteList에 포함된 경우 인증 불필요
+			}
+		}
+
+		// whiteList에 포함되지 않은 경우 인증 필요
+		return true;
 	}
 }

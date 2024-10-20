@@ -22,7 +22,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.groomiz.billage.auth.jwt.JwtFilter;
-import com.groomiz.billage.auth.jwt.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,8 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final SecurityProperties securityProperties;
-	private final JwtUtil jwtUtil;
+	private final JwtFilter jwtFilter;
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -50,14 +48,26 @@ public class SecurityConfig {
 		http
 			.csrf(CsrfConfigurer::disable) // CSRF 설정 비활성화
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-			.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/api/v1/users/login",
+					"/api/v1/users/check-nickname",
+					"/images/**",
+					"/swagger-ui/**",
+					"/v3/api-docs/**",
+					"/error",
+					"/test/**",
+					"/",
+					"/admin/**",
+					"/h2-console/**").permitAll()  // 화이트리스트 경로는 인증 없이 허용
+				.anyRequest().authenticated()  // 그 외 모든 요청은 인증 필요
+			)
 			.sessionManagement(
 				session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 설정 (Stateless로 설정)
 			.formLogin(FormLoginConfigurer::disable) // Form 로그인 비활성화
 			.httpBasic(HttpBasicConfigurer::disable) // HTTP Basic 인증 비활성화
 			.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))  // H2 Console 설정
-			.addFilterBefore(new JwtFilter(securityProperties.getWhitelist(), jwtUtil),
-				UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+
 		return http.build();
 	}
 

@@ -24,14 +24,14 @@ public class JwtUtil {
 			SignatureAlgorithm.HS256.getJcaName());
 	}
 
-	public String getUsername(String token) {
+	public String getStudentNumber(String token) {
 		try {
 			return Jwts.parser()
 				.setSigningKey(secretKey)
 				.build()
 				.parseClaimsJws(token)
 				.getBody()
-				.get("username", String.class);
+				.get("studentNumber", String.class);
 		} catch (ExpiredJwtException e) {
 			// 토큰이 만료된 경우 예외 처리
 			System.out.println("JWT expired.");
@@ -96,10 +96,10 @@ public class JwtUtil {
 		}
 	}
 
-	public String createJwt(String category, String username, String role, Long expiredMs) {
+	public String createJwt(String category, String studentNumber, String role, Long expiredMs) {
 		return Jwts.builder()
 			.claim("category", category)
-			.claim("username", username)
+			.claim("studentNumber", studentNumber)
 			.claim("role", role)
 			.setIssuedAt(new Date(System.currentTimeMillis()))
 			.setExpiration(new Date(System.currentTimeMillis() + expiredMs))
