@@ -27,13 +27,9 @@ public class 	BuildingController {
 
 	@GetMapping
 	@Operation(summary = "건물 목록 조회")
-	public ResponseEntity<List<BuildingListResponse>> findAll(
-		@Parameter(description = "예약 날짜", example = "2024-07-01")
-		@RequestParam("date") LocalDate date,
-		@Parameter(description = "예약 인원", example = "30")
-		@RequestParam("headcount") Integer count) {
+	public ResponseEntity<List<BuildingListResponse>> findAll(){
 
-		List<BuildingListResponse> response = buildingService.findAllBuildings(date, count);
+		List<BuildingListResponse> response = buildingService.findAllBuildings();
 		return ResponseEntity.ok(response);
 	}
 }

@@ -21,9 +21,9 @@ public class BuildingService {
 
 	private final BuildingRepository buildingRepository;
 
-	public List<BuildingListResponse> findAllBuildings(LocalDate date, Integer count) {
+	public List<BuildingListResponse> findAllBuildings() {
 
-		List<Building> buildings = buildingRepository.findBuildingsByClassroomCapacity(count);
+		List<Building> buildings = buildingRepository.findAll();
 
 		if (buildings.isEmpty()) {
 			throw new BuildingException(BuildingErrorCode.BUILDING_NOT_FOUND);
@@ -31,9 +31,6 @@ public class BuildingService {
 
 		return buildings.stream()
 			.map(building -> {
-				long totalReservations = buildingRepository.countReservationsByBuildingAndDate(building.getId(), date);
-				long totalClassrooms = buildingRepository.countClassroomsByBuilding(building.getId());
-
 
 				List<Long> floors = generateFloors(building.getStartFloor(), building.getEndFloor());
 
