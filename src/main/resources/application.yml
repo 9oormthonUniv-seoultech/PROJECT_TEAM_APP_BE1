@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: local  # 로컬에서 실행할 때 기본적으로 'local' 프로파일 활성화
 
 server:
   port: 8080
@@ -14,4 +14,3 @@ springdoc:
     disable-swagger-default-url: true
     display-request-duration: true
     operations-sorter: alpha
-

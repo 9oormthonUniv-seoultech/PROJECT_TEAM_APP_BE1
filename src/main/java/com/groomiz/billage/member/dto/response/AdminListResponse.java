@@ -21,7 +21,7 @@ public class AdminListResponse {
 
 	@Data
 	@Schema(description = "담당자 정보")
-	static class AdminInfo {
+	public static class AdminInfo {
 		@Schema(description = "소속 학과", example = "기계시스템디자인공학과")
 		private Major major;
 		@Schema(description = "담당자 전화번호", example = "02-2345-6789")

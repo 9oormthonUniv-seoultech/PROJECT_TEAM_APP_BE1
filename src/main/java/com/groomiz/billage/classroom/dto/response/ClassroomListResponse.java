@@ -5,8 +5,14 @@ import java.util.List;
 import com.groomiz.billage.classroom.dto.ReservationTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Schema(description = "강의실 목록 조회 응답 DTO")
 public class ClassroomListResponse {
