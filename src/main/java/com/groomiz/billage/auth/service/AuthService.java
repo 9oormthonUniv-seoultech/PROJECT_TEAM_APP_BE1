@@ -63,7 +63,7 @@ public class AuthService {
 
 		// RefreshToken의 유효성 확인
 		String category = jwtUtil.getCategory(refreshToken);
-		String username = jwtUtil.getUsername(refreshToken);
+		String username = jwtUtil.getStudentNumber(refreshToken);
 		if (!"RefreshToken".equals(category) || !redisService.checkExistsValue(refreshToken)) {
 			throw new AuthException(AuthErrorCode.INVALID_TOKEN);
 		}

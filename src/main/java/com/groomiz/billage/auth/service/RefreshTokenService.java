@@ -35,8 +35,8 @@ public class RefreshTokenService {
 			return new ResponseEntity<>("Refresh token expired", HttpStatus.BAD_REQUEST);
 		}
 
-		String username = jwtUtil.getUsername(refreshToken);
-		String storedToken = redisService.getValues(username);
+		String studentNumber = jwtUtil.getStudentNumber(refreshToken);
+		String storedToken = redisService.getValues(studentNumber);
 
 		// Redis에 저장된 토큰과 비교하여 유효성 검증
 		if (!refreshToken.equals(storedToken)) {
@@ -45,12 +45,12 @@ public class RefreshTokenService {
 
 		// 새로운 AccessToken 및 RefreshToken 생성
 		String role = jwtUtil.getRole(refreshToken);
-		String newAccessToken = jwtUtil.createJwt("AccessToken", username, role, 600000L); // 10분
-		String newRefreshToken = jwtUtil.createJwt("RefreshToken", username, role, 86400000L); // 1일
+		String newAccessToken = jwtUtil.createJwt("AccessToken", studentNumber, role, 600000L); // 10분
+		String newRefreshToken = jwtUtil.createJwt("RefreshToken", studentNumber, role, 86400000L); // 1일
 
 		// 기존 토큰 삭제 및 새 토큰 저장
-		redisService.deleteValues(username);
-		redisService.setValues(username, newRefreshToken, Duration.ofDays(1));
+		redisService.deleteValues(studentNumber);
+		redisService.setValues(studentNumber, newRefreshToken, Duration.ofDays(1));
 
 		// 새로운 토큰을 헤더에 Bearer 형식으로 추가
 		response.setHeader("Authorization", "Bearer " + newAccessToken);

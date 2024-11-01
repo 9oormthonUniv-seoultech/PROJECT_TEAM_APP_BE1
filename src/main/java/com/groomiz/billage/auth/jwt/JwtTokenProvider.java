@@ -11,11 +11,11 @@ public class JwtTokenProvider {
 		this.jwtUtil = jwtUtil;
 	}
 
-	public String createAccessToken(String username, String role) {
-		return jwtUtil.createJwt("AccessToken", username, role, 600000L);
+	public String createAccessToken(String studentNumber, String role) {
+		return jwtUtil.createJwt("AccessToken", studentNumber, role, 600000L);
 	}
 
-	public String createRefreshToken(String username, String role) {
-		return jwtUtil.createJwt("RefreshToken", username, role, 86400000L);
+	public String createRefreshToken(String studentNumber, String role) {
+		return jwtUtil.createJwt("RefreshToken", studentNumber, role, 86400000L);
 	}
 }
