@@ -63,7 +63,7 @@ public class AdminService {
 
 	// 전화번호 형식 확인 메서드
 	private boolean isValidPhoneNumber(String phoneNumber) {
-		String regex = "^(\\d{3}-\\d{3,4}-\\d{4}|\\d{2,3}-\\d{3,4}-\\d{4})$";
+		String regex = "^010-\\d{4}-\\d{4}$";
 		return Pattern.matches(regex, phoneNumber);
 	}
 
